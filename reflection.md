@@ -10,8 +10,8 @@ time spent: 3h 30m
   (for example: "the secret number kept changing" or "the hints were backwards").
 
 1. The feedback telling go high or low is giving misinformation
-2. low high message is not reflected when change
-3. secret is not updated resulted in secret out of low high     range
+2. low high message is not reflected when difficulty change
+3. secret is not updated on difficulty change resulted in secret out of low high range
 4. entering numbers out of range still consumed attempts
 5. attempts not working properly
 6. banners, developer info not updating in time  
@@ -59,7 +59,7 @@ I could also ask other AI models to further confirm the tests.
 - The secret number wasn't changing on the version I recieved, or maybe I didn't notice it and it was fixed along side other bugs.
 - Everytime rerun is called, the page is refreshed and the whole application code is executed again. Top to bottom. Thus rerun.
 - I refactored the initialization process into a function, removed all instances of secret number being updated and have a new secret number generated only on the initialization function.
-The function is called when the app is first launched and on new game.
+The function is called when the app is first launched, on new game, and difficulty changes.
 ---
 
 ## 5. Looking ahead: your developer habits

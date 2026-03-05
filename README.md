@@ -25,14 +25,30 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+The purpose of the game is to have the user guess a secret RNG with hints telling the user to go higher or lower.
+
+- Bugs found
+   1. The feedback telling go high or low is giving misinformation
+   2. low high message is not reflected when difficulty change
+   3. secret is not updated on difficulty change resulted in secret out of low high range
+   4. entering numbers out of range still consumed attempts
+   5. attempts not working properly
+   6. banners, developer info not updating in time  
+   7. score and attempts not reseting on new game
+   8. new game not working after game won
+   9. (found late) scoring system is has
+
+- edited the feedback logic.
+- initialize game on difficulty change and new game
+- add logic to check if verify input
+- fixed attempt logic
+- reorder function and banner calls
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+-  ![alt text](image.png)
 
 ## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+challenge 1 
+![alt text](pytest.png)
