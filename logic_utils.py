@@ -1,3 +1,5 @@
+#refactored logic functions with Claude AI
+
 def get_range_for_difficulty(difficulty: str):
     """Return (low, high) inclusive range for a given difficulty."""
     if difficulty == "Easy":
