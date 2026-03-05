@@ -20,6 +20,7 @@ def initialize_game_state(low, high, difficulty="Normal"):
     st.session_state.history = []
 
 
+
 #edited
 def parse_guess(raw: str, low: int, high: int):
     if raw is None or raw.strip() == "":
@@ -105,6 +106,7 @@ elif st.session_state.get("difficulty") != difficulty:
     initialize_game_state(low, high, difficulty)
 
 
+
 st.subheader("Make a guess")
 
 st.info(
@@ -133,10 +135,14 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
-    st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
-    st.success("New game started.")
+    st.session_state.is_new_game = True
+    initialize_game_state(low, high, difficulty)
     st.rerun()
+
+#show new game banner if new game was just started
+if st.session_state.get("is_new_game"):
+    st.success("🎮 New Game Started! 🎮")
+    st.session_state.is_new_game = False
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
