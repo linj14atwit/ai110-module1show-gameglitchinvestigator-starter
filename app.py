@@ -10,33 +10,30 @@ def get_range_for_difficulty(difficulty: str):
         return 1, 50
     return 1, 100
 
+#function that initializes the game state
 def initialize_game_state(low, high, difficulty="Normal"):
     st.session_state.secret = random.randint(low, high)
     st.session_state.difficulty = difficulty
     st.session_state.attempts = 0
-    st.session_state.score = 0
+    st.session_state.score = 100
     st.session_state.status = "playing"
     st.session_state.history = []
 
 
+#edited
 def parse_guess(raw: str, low: int, high: int):
     if raw is None or raw.strip() == "":
         return False, None, "Enter a guess."
 
+    #check if it is a number
     try:
         float(raw)
     except ValueError:
         return False, None, "That is not a number."
 
     value = int(raw)
-    # try:
-    #     if "." in raw:
-    #         value = int(float(raw))
-    #     else:
-    #         value = int(raw)
-    # except Exception:
-    #     return False, None, "That is not a number."
 
+    #check if it is in range
     if value < low or value > high:
         return False, None, f"Guess must be between {low} and {high}."
 
@@ -44,6 +41,7 @@ def parse_guess(raw: str, low: int, high: int):
 
 
 def check_guess(guess, secret):
+    #fixed logic
     if not isinstance(guess, int):
         return "Invalid Input", "❌ Please enter a valid integer."
 
@@ -57,18 +55,20 @@ def check_guess(guess, secret):
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
-        points = 100 - 10 * (attempt_number + 1)
-        if points < 10:
-            points = 10
-        return current_score + points
+        # points = 10 * (attempt_number + 1)
+        if current_score < 10:
+            #minimun point of 10 for winning
+            current_score = 10
+        return current_score
 
     if outcome == "Too High":
-        if attempt_number % 2 == 0:
-            return current_score + 5
-        return current_score - 5
+        #remove weird logic code
+        # if attempt_number % 2 == 0:
+        #     return current_score + 5
+        return current_score - 10
 
     if outcome == "Too Low":
-        return current_score - 5
+        return current_score - 10
 
     return current_score
 
@@ -97,25 +97,13 @@ low, high = get_range_for_difficulty(difficulty)
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
+
+#refactored
 if not st.session_state:
     initialize_game_state(low, high)
 elif st.session_state.get("difficulty") != difficulty:
     initialize_game_state(low, high, difficulty)
 
-# if "secret" not in st.session_state:
-#     st.session_state.secret = random.randint(low, high)
-
-# if "attempts" not in st.session_state:
-#     st.session_state.attempts = 1
-
-# if "score" not in st.session_state:
-#     st.session_state.score = 0
-
-# if "status" not in st.session_state:
-#     st.session_state.status = "playing"
-
-# if "history" not in st.session_state:
-#     st.session_state.history = []
 
 st.subheader("Make a guess")
 
@@ -155,7 +143,7 @@ if st.session_state.status != "playing":
         st.success("You already won. Start a new game to play again.")
     else:
         st.error("Game over. Start a new game to try again.")
-    st.stop()
+    st.stop()   
 
 if submit:
     st.session_state.attempts += 1
