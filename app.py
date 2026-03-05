@@ -101,7 +101,7 @@ if st.session_state.status != "playing":
                 f"Final score: {st.session_state.score}"
             )
     elif st.session_state.attempts >= attempt_limit:
-            st.error(
+            st.error(   
                 f"Out of attempts! "
                 f"The secret was {st.session_state.secret}. "
                 f"Score: {st.session_state.score}"
@@ -139,7 +139,7 @@ if submit:
             outcome=outcome,
             attempt_number=st.session_state.attempts,
         )
-        
+
         if outcome == "Win":
             st.session_state.status = "won"
             st.rerun()
