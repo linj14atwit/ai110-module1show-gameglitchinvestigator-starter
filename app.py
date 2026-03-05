@@ -10,6 +10,14 @@ def get_range_for_difficulty(difficulty: str):
         return 1, 50
     return 1, 100
 
+def initialize_game_state(low, high, difficulty="Normal"):
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.difficulty = difficulty
+    st.session_state.attempts = 0
+    st.session_state.score = 0
+    st.session_state.status = "playing"
+    st.session_state.history = []
+
 
 def parse_guess(raw: str, low: int, high: int):
     if raw is None or raw.strip() == "":
@@ -39,7 +47,6 @@ def check_guess(guess, secret):
     if not isinstance(guess, int):
         return "Invalid Input", "❌ Please enter a valid integer."
 
-    #
     if guess == secret:
         return "Win", "🎉 Correct!"
     if guess > secret:
@@ -90,20 +97,25 @@ low, high = get_range_for_difficulty(difficulty)
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
-if "secret" not in st.session_state:
-    st.session_state.secret = random.randint(low, high)
+if not st.session_state:
+    initialize_game_state(low, high)
+elif st.session_state.get("difficulty") != difficulty:
+    initialize_game_state(low, high, difficulty)
 
-if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+# if "secret" not in st.session_state:
+#     st.session_state.secret = random.randint(low, high)
 
-if "score" not in st.session_state:
-    st.session_state.score = 0
+# if "attempts" not in st.session_state:
+#     st.session_state.attempts = 1
 
-if "status" not in st.session_state:
-    st.session_state.status = "playing"
+# if "score" not in st.session_state:
+#     st.session_state.score = 0
 
-if "history" not in st.session_state:
-    st.session_state.history = []
+# if "status" not in st.session_state:
+#     st.session_state.status = "playing"
+
+# if "history" not in st.session_state:
+#     st.session_state.history = []
 
 st.subheader("Make a guess")
 
@@ -156,10 +168,11 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0:
-            secret = int(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        # if st.session_state.attempts % 2 == 0:
+        #     secret = int(st.session_state.secret)
+        # else:
+        #      secret = st.session_state.secret
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 
