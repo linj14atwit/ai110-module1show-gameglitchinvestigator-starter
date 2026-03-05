@@ -18,7 +18,16 @@ def initialize_game_state(low, high, difficulty="Normal"):
     st.session_state.score = 100
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.message = None
 
+
+def show_debug_info(difficulty):
+    with st.expander("Developer Debug Info"):
+        st.write("Secret:", st.session_state.secret)
+        st.write("Attempts:", st.session_state.attempts)
+        st.write("Score:", st.session_state.score)
+        st.write("Difficulty:", difficulty)
+        st.write("History:", st.session_state.history)
 
 
 #edited
@@ -73,6 +82,9 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
 
     return current_score
 
+
+#main app code
+
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
 st.title("🎮 Game Glitch Investigator")
@@ -114,12 +126,8 @@ st.info(
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
-with st.expander("Developer Debug Info"):
-    st.write("Secret:", st.session_state.secret)
-    st.write("Attempts:", st.session_state.attempts)
-    st.write("Score:", st.session_state.score)
-    st.write("Difficulty:", difficulty)
-    st.write("History:", st.session_state.history)
+#refactored
+show_debug_info(difficulty)
 
 raw_guess = st.text_input(
     "Enter your guess:",
@@ -146,12 +154,35 @@ if st.session_state.get("is_new_game"):
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
-        st.success("You already won. Start a new game to play again.")
-    else:
-        st.error("Game over. Start a new game to try again.")
-    st.stop()   
+            st.balloons()
+            st.success(
+                f"You won! The secret was {st.session_state.secret}. "
+                f"Final score: {st.session_state.score}"
+            )
+    elif st.session_state.attempts >= attempt_limit:
+            st.error(
+                f"Out of attempts! "
+                f"The secret was {st.session_state.secret}. "
+                f"Score: {st.session_state.score}"
+            )
+    pass
+    # if st.session_state.status == "won":
+    #     st.success("You already won. Start a new game to play again.")
+    # else:
+    #     st.error("Game over. Start a new game to try again.")
+    # st.stop()  
+elif st.session_state.get("message") and show_hint:
+    st.warning(st.session_state.message) 
 
 if submit:
+    #check if game is already over
+    if st.session_state.status != "playing":
+        if st.session_state.status == "won":
+            st.success("You already won. Start a new game to play again.")
+        else:
+            st.error("Game over. Start a new game to try again.")
+        st.stop()  
+
     st.session_state.attempts += 1
 
     ok, guess_int, err = parse_guess(raw_guess, low, high)
@@ -168,10 +199,10 @@ if submit:
         #      secret = st.session_state.secret
         secret = st.session_state.secret
 
-        outcome, message = check_guess(guess_int, secret)
+        outcome, st.session_state.message = check_guess(guess_int, secret)
 
-        if show_hint:
-            st.warning(message)
+        # if show_hint:
+        #     st.warning(message)
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,
@@ -180,20 +211,30 @@ if submit:
         )
 
         if outcome == "Win":
-            st.balloons()
             st.session_state.status = "won"
-            st.success(
-                f"You won! The secret was {st.session_state.secret}. "
-                f"Final score: {st.session_state.score}"
-            )
-        else:
-            if st.session_state.attempts >= attempt_limit:
-                st.session_state.status = "lost"
-                st.error(
-                    f"Out of attempts! "
-                    f"The secret was {st.session_state.secret}. "
-                    f"Score: {st.session_state.score}"
-                )
+            st.rerun()
+        elif st.session_state.attempts >= attempt_limit:
+            st.session_state.status = "lost"
+            st.rerun()
+
+        # if outcome == "Win":
+        #     st.balloons()
+        #     st.session_state.status = "won"
+        #     st.success(
+        #         f"You won! The secret was {st.session_state.secret}. "
+        #         f"Final score: {st.session_state.score}"
+        #     )
+        # else:
+        #     if st.session_state.attempts >= attempt_limit:
+        #         st.session_state.status = "lost"
+        #         st.error(
+        #             f"Out of attempts! "
+        #             f"The secret was {st.session_state.secret}. "
+        #             f"Score: {st.session_state.score}"
+        #         )
+
+    if st.session_state.status == "playing":
+        st.rerun()
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")
